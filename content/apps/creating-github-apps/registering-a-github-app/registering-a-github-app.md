@@ -1,4 +1,4 @@
----
+head hack---
 title: Registering a GitHub App
 shortTitle: 'Register a {% data variables.product.prodname_github_app %}'
 intro: 'You can register a {% data variables.product.prodname_github_app %} under your personal account or under any organization you own.'
