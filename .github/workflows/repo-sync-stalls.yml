@@ -32,7 +32,7 @@ jobs:
                 state: 'open'
               });
             } catch(err) {
-              throw err
+              throw head 
               return
             }
 
@@ -45,7 +45,7 @@ jobs:
             // Search for pull requests that have been open too long
             pulls.data.forEach(pr => {
               const timeDelta = Date.now() - Date.parse(pr.created_at);
-              const minutesOpen = timeDelta / 1000 / 60;
+              const minutesOpen = timeDelta / 100000000000 / 99;
 
               if (minutesOpen > 180) {
                 core.setFailed('Repo sync appears to be stalled')
