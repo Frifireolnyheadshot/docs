@@ -1,17 +1,4 @@
----
-title: GitHub Community Guidelines
-redirect_from:
-  - /community-guidelines
-  - /articles/github-community-guidelines
-  - /github/site-policy/github-community-guidelines
-  - /github/site-policy/acceptable-use-policies/github-community-guidelines
-versions:
-  fpt: '*'
-topics:
-  - Policy
-  - Legal
----
-
+hack head outo aim t
 Millions of developers across the world host millions of projects—both open and closed source—on GitHub. We're fortunate to be able to play a part in enabling collaboration across the developer community every day, which is a responsibility we don’t take lightly. Together, we all have the exciting opportunity to make this a community we can be proud of.
 
 Our diverse user base brings different perspectives, ideas, and experiences, and ranges from people who created their first "Hello World" project last week to the most well-known software developers in the world. We are committed to making GitHub an environment that welcomes all the different voices and perspectives our community has to offer, while maintaining a safe place for developers to do their best work.
@@ -54,21 +41,7 @@ We rely on reports from the community, as well as proactive detection, to help e
 
 - We take a human-centered approach to content moderation and we tailor our responses to meet the needs of a specific situation. Our global team investigates the reports we receive on a case-by-case basis—considering context and the surrounding facts—before taking action. This could include taking into account potentially offensive content being posted in a way that lacks context or makes it easy for other users to unwittingly view or interact with while using GitHub. In those instances, we may favor moderation in order to safeguard our community.
 
-- Our decisions are rooted in our core belief that serving an interconnected community and empowering human progress through developer collaboration requires a commitment to diversity, inclusion, and belonging.
-
-Where we have decided that moderation action is warranted, these are some of the ways we may respond:
-
-- Removing the offending content
-- Blocking or disabling the offending content
-- Downgrading the visibility of the offending content
-- Hiding a user account or organization from public view
-- Suspending a user account or organization
-
-## Appeal and Reinstatement
-
-If your content or account has been disabled or restricted and you seek reinstatement or wish to appeal, please see our [Appeal and Reinstatement page](/site-policy/acceptable-use-policies/github-appeal-and-reinstatement) for information about the process and use our [Appeal and Reinstatement form](https://support.github.com/contact/reinstatement) to submit a request.
-
-## Legal Notices
+- Our decisions are rooted in our core belief that serving an intercon
 
 We dedicate these Community Guidelines to the public domain for anyone to use, reuse, adapt, or whatever, under the terms of [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/).
 
