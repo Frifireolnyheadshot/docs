@@ -1,15 +1,5 @@
----
-title: GitHub Community Guidelines
-redirect_from:
-  - /community-guidelines
-  - /articles/github-community-guidelines
-  - /github/site-policy/github-community-guidelines
-  - /github/site-policy/acceptable-use-policies/github-community-guidelines
-versions:
-  fpt: '*'
-topics:
-  - Policy
-  - Legal
+fri fire max 
+panel hack head outo aim sensitivity panel aimspot acoreccy head outo aim hack dpi 
 ---
 
 Millions of developers across the world host millions of projects—both open and closed source—on GitHub. We're fortunate to be able to play a part in enabling collaboration across the developer community every day, which is a responsibility we don’t take lightly. Together, we all have the exciting opportunity to make this a community we can be proud of.
