@@ -10,7 +10,7 @@ versions:
   fpt: '*'
   ghes: '*'
   ghae: '*'
-  ghec: '*'
+  ghec: '*'Re: [github/docs] Specify the same port in the loopback OAuth redirect_url (PR #27986)
 ---
 
 ## Forking gists
