@@ -43,7 +43,9 @@ source-code alerts, you may find [codeql database analyze](/code-security/codeql
 Alternatively, if you have only a single query to run, you might prefer
 [codeql query run](/code-security/codeql-cli/codeql-cli-manual/query-run), which can display human-readable output for quick inspection of results while you're debugging.
 
-## Primary options
+## Options
+
+### Primary Options
 
 #### `<database>`
 
@@ -84,6 +86,44 @@ used.
 
 Omit evaluation of queries that already seem to have a BQRS result
 stored in the output location.
+
+#### `--no-database-extension-packs`
+
+\[Advanced] Omit extension packs stored in the database during database
+creation, either from a Code Scanning configuration file or from
+extension files stored in the 'extensions' directory of the analyzed
+codebase.
+
+#### `--no-database-threat-models`
+
+\[Advanced] Omit threat model configuration stored in the database
+during database creation from a Code Scanning configuration file.
+
+### Options to control the threat models to be used
+
+#### `--threat-model=<name>...`
+
+A list of threat models to enable or disable.
+
+The argument is the name of a threat model, optionally preceeded by a
+'!'. If no '!' is present, the named threat model and all of its
+descendants are enabled. If a '!' is present, the named threat model
+and all of its descendants are disabled.
+
+The 'default' threat model is enabled by default, but can be disabled
+by specifying '--threat-model !default'.
+
+The 'all' threat model can be used to enable or disable all threat
+models.
+
+The --threat-model options are processed in order. For example,
+'--threat-model local --threat-model !environment' enables all of
+the threat models in the 'local' group except for the 'environment'
+threat model.
+
+This option only has an effect for languages that support threat models.
+
+Available since `v2.15.3`.
 
 ### Options to control the query evaluator
 
@@ -164,7 +204,7 @@ below this percentage.
 
 #### `--external=<pred>=<file.csv>`
 
-A CSV file that contains rows for external predicate `<pred>`.
+A CSV file that contains rows for external predicate _\<pred>_.
 Multiple `--external` options can be supplied.
 
 #### `--xterm-progress=<mode>`
@@ -267,6 +307,11 @@ Don't check embedded query metadata in QLDoc comments for validity.
 \[Advanced] Override the default maximum size for a compilation cache
 directory.
 
+#### `--fail-on-ambiguous-relation-name`
+
+\[Advanced] Fail compilation if an ambiguous relation name is generated
+during compilation.
+
 ### Options to set up compilation environment
 
 #### `--search-path=<dir>[:<dir>...]`
@@ -338,7 +383,7 @@ directory.
 #### `--registries-auth-stdin`
 
 Authenticate to GitHub Enterprise Server Container registries by passing
-a comma-separated list of `<registry_url>=<token>` pairs.
+a comma-separated list of \<registry\_url>=\<token> pairs.
 
 For example, you can pass
 `https://containers.GHEHOSTNAME1/v2/=TOKEN1,https://containers.GHEHOSTNAME2/v2/=TOKEN2`
@@ -395,3 +440,13 @@ the running subcommand.
 
 (To write a log file with a name you have full control over, instead
 give `--log-to-stderr` and redirect stderr as desired.)
+
+#### `--common-caches=<dir>`
+
+\[Advanced] Controls the location of cached data on disk that will
+persist between several runs of the CLI, such as downloaded QL packs and
+compiled query plans. If not set explicitly, this defaults to a
+directory named `.codeql` in the user's home directory; it will be
+created if it doesn't already exist.
+
+Available since `v2.15.2`.

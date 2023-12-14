@@ -1,12 +1,12 @@
 import { unified } from 'unified'
-import markdown from 'remark-parse-no-trim'
-import markdownNext from 'remark-parse'
+import remarkParse from 'remark-parse'
 import gfm from 'remark-gfm'
 import emoji from 'remark-gemoji-to-emoji'
 import remark2rehype from 'remark-rehype'
 import raw from 'rehype-raw'
 import slug from 'rehype-slug'
 import highlight from 'rehype-highlight'
+import { common } from 'lowlight'
 import dockerfile from 'highlight.js/lib/languages/dockerfile'
 import http from 'highlight.js/lib/languages/http'
 import groovy from 'highlight.js/lib/languages/groovy'
@@ -25,12 +25,13 @@ import rewriteForRowheaders from './rewrite-for-rowheaders.js'
 import wrapProceduralImages from './wrap-procedural-images.js'
 import parseInfoString from './parse-info-string.js'
 import annotate from './annotate.js'
+import alerts from './alerts.js'
 
 export function createProcessor(context) {
   return (
     unified()
-      .use(process.env.COMMONMARK ? markdownNext : markdown)
-      .use(process.env.COMMONMARK ? gfm : null)
+      .use(remarkParse)
+      .use(gfm)
       // Markdown AST below vvv
       .use(parseInfoString)
       .use(emoji)
@@ -43,7 +44,7 @@ export function createProcessor(context) {
       .use(codeHeader)
       .use(annotate)
       .use(highlight, {
-        languages: { graphql, dockerfile, http, groovy, erb, powershell },
+        languages: { ...common, graphql, dockerfile, http, groovy, erb, powershell },
         subset: false,
       })
       .use(raw)
@@ -53,6 +54,7 @@ export function createProcessor(context) {
       .use(rewriteImgSources)
       .use(rewriteAssetImgTags)
       .use(rewriteLocalLinks, context)
+      .use(alerts)
       // HTML AST above ^^^
       .use(html)
     // String below vvv
@@ -61,8 +63,8 @@ export function createProcessor(context) {
 
 export function createMinimalProcessor(context) {
   return unified()
-    .use(process.env.COMMONMARK ? markdownNext : markdown)
-    .use(process.env.COMMONMARK ? gfm : null)
+    .use(remarkParse)
+    .use(gfm)
     .use(remark2rehype, { allowDangerousHtml: true })
     .use(slug)
     .use(raw)

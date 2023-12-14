@@ -45,7 +45,7 @@ Generally, we name our supported ecosystems after the software programming langu
 - Composer (registry: https://packagist.org/){% ifversion GH-advisory-db-erlang-support %}
 - Erlang (registry: https://hex.pm/){% endif %}
 - Go (registry: https://pkg.go.dev/)
-{%- ifversion fpt or ghec or ghes > 3.6 or ghae > 3.6 %}
+{%- ifversion fpt or ghec or ghes or ghae > 3.6 %}
 - GitHub Actions (https://github.com/marketplace?type=actions/) {% endif %}
 - Maven (registry: https://repo.maven.apache.org/maven2)
 - npm (registry: https://www.npmjs.com/)
@@ -62,7 +62,7 @@ If you enable {% data variables.product.prodname_dependabot_alerts %} for your r
 
 ### Unreviewed advisories
 
-Unreviewed advisories are security vulnerabilites that we publish automatically into the {% data variables.product.prodname_advisory_database %}, directly from the National Vulnerability Database feed.
+Unreviewed advisories are security vulnerabilities that we publish automatically into the {% data variables.product.prodname_advisory_database %}, directly from the National Vulnerability Database feed.
 
 {% data variables.product.prodname_dependabot %} doesn't create {% data variables.product.prodname_dependabot_alerts %} for unreviewed advisories as this type of advisory isn't checked for validity or completion.
 

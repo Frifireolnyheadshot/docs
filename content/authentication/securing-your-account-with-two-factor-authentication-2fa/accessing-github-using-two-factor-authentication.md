@@ -51,6 +51,7 @@ If you've set up a security key on your account, and your browser supports secur
 1. Select the appropriate option in the prompt. Depending on your security key configuration, you may type a PIN, complete a biometric prompt, or use a physical security key.
 
 {% ifversion passkeys %}
+
 ### Using a passkey
 
 If you have enabled 2FA, and you have added a passkey to your account, you can use the passkey to sign in. Since passkeys satisfy both password and 2FA requirements, you can complete your sign in with a single step. For more information, see "[AUTOTITLE](/authentication/authenticating-with-a-passkey/about-passkeys)" and "[AUTOTITLE](/authentication/authenticating-with-a-passkey/signing-in-with-a-passkey)."
@@ -82,9 +83,7 @@ If you have installed and signed in to {% data variables.product.prodname_mobile
 
 ## Using two-factor authentication with the command line
 
-{% ifversion fpt or ghec %}
-Enabling 2FA may affect authentication to {% data variables.product.prodname_dotcom %} through the command line. To find out if your authentication method is affected, see the following sections.
-{% else %}
+{% ifversion ghes %}
 After you've enabled 2FA, you will no longer use your password to access {% data variables.product.product_name %} on the command line. Instead, use Git Credential Manager, a {% data variables.product.pat_generic %}, or an SSH key.
 {% endif %}
 

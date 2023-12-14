@@ -40,7 +40,7 @@ You have several options for triaging notifications from your inbox.
 | Read            | Marks a notification as read. To only view read notifications in your inbox, use the `is:read` query. This query doesn't include notifications marked as **Done**.
 | Unread          | Marks notification as unread. To only view unread notifications in your inbox, use the `is:unread` query. |
 
-To see the available keyboard shortcuts, see "[AUTOTITLE](/get-started/using-github/keyboard-shortcuts#notifications)."
+To see the available keyboard shortcuts, see "[AUTOTITLE](/get-started/accessibility/keyboard-shortcuts#notifications)."
 
 Before choosing a triage option, you can preview your notification's details first and investigate. For more information, see "[AUTOTITLE](/account-and-profile/managing-subscriptions-and-notifications-on-github/viewing-and-triaging-notifications/triaging-a-single-notification)."
 
@@ -61,11 +61,11 @@ You can add up to 15 of your own custom filters.
 {% data reusables.notifications.access_notifications %}
 1. To open the filter settings, in the left sidebar, next to "Filters", click {% octicon "gear" aria-label="Customize filters" %}.
 
-  {% tip %}
+   {% tip %}
 
-  **Tip:** You can quickly preview a filter's inbox results by creating a query in your inbox view and clicking **Save**, which opens the custom filter settings.
+   **Tip:** You can quickly preview a filter's inbox results by creating a query in your inbox view and clicking **Save**, which opens the custom filter settings.
 
-  {% endtip %}
+   {% endtip %}
 
 1. Add a name for your filter and a filter query. For example, to only see notifications for a specific repository, you can create a filter using the query `repo:octocat/open-source-project-name reason:participating`. You can also add emojis with a native emoji keyboard. For a list of supported search queries, see "[Supported queries for custom filters](#supported-queries-for-custom-filters)."
 

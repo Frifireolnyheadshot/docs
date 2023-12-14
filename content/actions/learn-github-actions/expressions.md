@@ -23,17 +23,13 @@ Expressions are commonly used with the conditional `if` keyword in a workflow fi
 `${{ <expression> }}`
 {% endraw %}
 
-{% data reusables.actions.expression-syntax-if %} For more information about `if` conditionals, see "[AUTOTITLE](/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idif)."
+{% note %}
+
+**Note**: The exception to this rule is when you are using expressions in an `if` clause, where, optionally, you can usually omit {% raw %}`${{`{% endraw %} and {% raw %}`}}`{% endraw %}. For more information about `if` conditionals, see "[AUTOTITLE](/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idif)."
+
+{% endnote %}
 
 {% data reusables.actions.context-injection-warning %}
-
-### Example expression in an `if` conditional
-
-```yaml
-steps:
-  - uses: actions/hello-world-javascript-action@e76147da8e5c81eaf017dede5645551d4b94427b
-    if: <expression> 
-```
 
 ### Example setting an environment variable
 
@@ -118,7 +114,7 @@ env:
 
 {% data variables.product.prodname_dotcom %} offers ternary operator like behaviour that you can use in expressions. By using a ternary operator in this way, you can dynamically set the value of an environment variable based on a condition, without having to write separate if-else blocks for each possible option.
 
-#### Example
+### Example
 
 {% raw %}
 
@@ -196,7 +192,7 @@ Replaces values in the `string`, with the variable `replaceValueN`. Variables in
 
 {% raw %}
 
-```js
+```javascript
 format('Hello {0} {1} {2}', 'Mona', 'the', 'Octocat')
 ```
 
@@ -208,7 +204,7 @@ Returns 'Hello Mona the Octocat'.
 
 {% raw %}
 
-```js
+```javascript
 format('{{Hello {0} {1} {2}!}}', 'Mona', 'the', 'Octocat')
 ```
 
@@ -303,7 +299,7 @@ jobs:
 
 Returns a single hash for the set of files that matches the `path` pattern. You can provide a single `path` pattern or multiple `path` patterns separated by commas. The `path` is relative to the `GITHUB_WORKSPACE` directory and can only include files inside of the `GITHUB_WORKSPACE`. This function calculates an individual SHA-256 hash for each matched file, and then uses those hashes to calculate a final SHA-256 hash for the set of files. If the `path` pattern does not match any files, this returns an empty string. For more information about SHA-256, see "[SHA-2](https://en.wikipedia.org/wiki/SHA-2)."
 
-You can use pattern matching characters to match file names. Pattern matching is case-insensitive on Windows. For more information about supported pattern matching characters, see "[AUTOTITLE](/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet)."
+You can use pattern matching characters to match file names. Pattern matching for `hashFiles` follows glob pattern matching and is case-insensitive on Windows. For more information about supported pattern matching characters, see the [Patterns](https://www.npmjs.com/package/@actions/glob#patterns) section in the `@actions/glob` documentation.
 
 #### Example with a single pattern
 
@@ -323,7 +319,7 @@ You can use the following status check functions as expressions in `if` conditio
 
 ### success
 
-Returns `true` when none of the previous steps have failed or been canceled.
+Returns `true` when all previous steps have succeeded.
 
 #### Example of `success`
 

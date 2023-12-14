@@ -21,7 +21,7 @@ redirect_from:
 
 GHAS is a suite of tools that requires active participation from developers across your enterprise. To realize the best return on your investment, you must learn how to use, apply, and maintain GHAS.
 
-We’ve created a phased approach to GHAS rollouts developed from industry and GitHub best practices. We expect most customers will want to follow these phases, based on our experience helping customers with a successful deployment of {% data variables.product.prodname_GH_advanced_security %}, but you may need to modify this approach to meet the needs of your company. 
+We’ve created a phased approach to GHAS rollouts developed from industry and GitHub best practices. We expect most customers will want to follow these phases, based on our experience helping customers with a successful deployment of {% data variables.product.prodname_GH_advanced_security %}, but you may need to modify this approach to meet the needs of your company.
 
 Enabling GHAS across a large organization can be broken down into six core phases.
 
@@ -43,7 +43,7 @@ If you encounter any issues or have any questions during your implementation, yo
 
 If you prefer to have guidance throughout the rollout process, {% data variables.product.prodname_professional_services %} can partner with you for a successful rollout and implementation of {% data variables.product.prodname_GH_advanced_security %}. We offer a variety of options for guidance and support. We also have training and bootcamps available to help your company to optimize the value of {% data variables.product.prodname_GH_advanced_security %}.
 
-Speak with your sales representative for more information about all the Professional Services options available. For more information, contact {% data variables.contact.contact_enterprise_sales %}.
+Speak with your sales representative for more information about all the {% data variables.product.prodname_professional_services_team %} options available. For more information, contact {% data variables.contact.contact_enterprise_sales %}.
 
 {% note %}
 

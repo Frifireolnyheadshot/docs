@@ -17,7 +17,6 @@ topics:
   - Security
 children:
   - /githubs-plans
-  - /about-versions-of-github-docs
   - /github-language-support
   - /types-of-github-accounts
   - /access-permissions-on-github

@@ -34,8 +34,6 @@ For most individual users, GPG or SSH will be the best choice for signing commit
 {% ifversion fpt or ghec %}
 Commits and tags have the following verification statuses, depending on whether you have enabled vigilant mode. By default vigilant mode is not enabled. For information on how to enable vigilant mode, see "[AUTOTITLE](/authentication/managing-commit-signature-verification/displaying-verification-statuses-for-all-of-your-commits)."
 
-{% data reusables.identity-and-permissions.vigilant-mode-beta-note %}
-
 Signing commits differs from signing off on a commit. For more information about signing off on commits, see "[AUTOTITLE](/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/managing-the-commit-signoff-policy-for-your-repository)."
 
 ### Default statuses
@@ -51,6 +49,8 @@ Signing commits differs from signing off on a commit. For more information about
 ### Signature verification for rebase and merge
 
 {% data reusables.pull_requests.rebase_and_merge_verification %}
+
+{% data reusables.pull_requests.rebase_and_merge_verification_2 %}
 
 For more information, see "[AUTOTITLE](/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/about-merge-methods-on-github#rebasing-and-merging-your-commits)."
 

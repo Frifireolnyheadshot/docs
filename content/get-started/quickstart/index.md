@@ -12,9 +12,9 @@ topics:
   - Notifications
   - Accounts
 children:
+  - /creating-an-account-on-github
   - /hello-world
   - /set-up-git
-  - /create-a-repo
   - /fork-a-repo
   - /github-flow
   - /contributing-to-projects
@@ -26,4 +26,3 @@ children:
 redirect_from:
   - /github/getting-started-with-github/quickstart
 ---
-

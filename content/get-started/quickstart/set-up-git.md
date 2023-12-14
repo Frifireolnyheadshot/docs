@@ -28,11 +28,11 @@ topics:
 
 To use Git on the command line, you will need to download, install, and configure Git on your computer. You can also install {% data variables.product.prodname_cli %} to use {% data variables.product.prodname_dotcom %} from the command line. For more information, see "[AUTOTITLE](/github-cli/github-cli/about-github-cli)."
 
-If you want to work with Git locally, but do not want to use the command line, you can download and install the [{% data variables.product.prodname_desktop %}]({% data variables.product.desktop_link %}) client.  For more information, see "[AUTOTITLE](/desktop/installing-and-configuring-github-desktop)."
+If you want to work with Git locally, but do not want to use the command line, you can download and install the [{% data variables.product.prodname_desktop %}]({% data variables.product.desktop_link %}) client.  For more information, see "[AUTOTITLE](/desktop/overview/about-github-desktop)."
 
 If you do not need to work with files locally, {% data variables.product.product_name %} lets you complete many Git-related actions directly in the browser, including:
 
-- [Creating a repository](/get-started/quickstart/create-a-repo)
+- [AUTOTITLE](/repositories/creating-and-managing-repositories/quickstart-for-repositories)
 - [Forking a repository](/get-started/quickstart/fork-a-repo)
 - [Managing files](/repositories/working-with-files/managing-files)
 - [Being social](/get-started/quickstart/be-social)
@@ -43,7 +43,9 @@ If you do not need to work with files locally, {% data variables.product.product
 
    {% note %}
 
-   **Note**: If you are using a Chrome OS device, additional setup is required:
+   **Note**: Most Chrome OS devices from 2020 onwards now have a built-in Linux environment, which includes Git. To enable it, go to the Launcher, search for Linux, and click **Turn on**.
+
+   If you are using an older Chrome OS device, another method is required:
 
    1. Install a terminal emulator such as Termux from the Google Play Store on your Chrome OS device.
    1. From the terminal emulator that you installed, install Git. For example, in Termux, enter `apt install git` and then type `y` when prompted.

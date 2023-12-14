@@ -23,7 +23,7 @@ shortTitle: Install on AWS
 
 {% note %}
 
-**Note:** At this time {% data variables.product.prodname_ghe_server %} does not support the use of the Amazon IDMSv2 Metadata API.
+**Note:** At this time {% data variables.product.prodname_ghe_server %} does not support the use of the Amazon IMDSv2 Metadata API.
 
 {% endnote %}
 
@@ -99,6 +99,7 @@ If you're setting up your AMI for the first time, you will need to create a secu
    This table identifies what each port is used for.
 
    {% data reusables.enterprise_installation.necessary_ports %}
+
 ## Creating the {% data variables.product.prodname_ghe_server %} instance
 
 To create the instance, you'll need to launch an EC2 instance with your {% data variables.product.prodname_ghe_server %} AMI and attach an additional storage volume for your instance data. For more information, see "[Hardware considerations](#hardware-considerations)."

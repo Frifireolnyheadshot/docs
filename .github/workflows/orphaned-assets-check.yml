@@ -41,7 +41,9 @@ jobs:
         run: |
           set -e
 
-          filesToRemove=`./src/assets/scripts/find-orphaned-assets.js`
+          # The `-s` is to make npm run silent and not print verbose
+          # information about the npm script alias.
+          filesToRemove=`npm run -s find-orphaned-assets`
           [ -z "$filesToRemove" ] && exit 0
 
           echo $filesToRemove | xargs git rm
@@ -64,15 +66,12 @@ jobs:
 
           gh pr create \
             --title "Delete orphaned assets ($date)" \
-            --body "Found with the find-orphaned-assets.js script.\n\nFor more info see https://github.com/github/docs-engineering/blob/main/docs/orphaned-assets.md" \
+            --body "Found with the 'npm run find-orphaned-assets' script.\n\nFor more info see https://github.com/github/docs-engineering/blob/main/docs/orphaned-assets.md" \
             --repo github/docs-internal \
             --label docs-content-fr
 
-      - name: Send Slack notification if workflow fails
-        uses: someimportantcompany/github-actions-slack-message@1d367080235edfa53df415bd8e0bbab480f29bad
-        if: ${{ failure() && env.FREEZE != 'true' }}
+      - uses: ./.github/actions/slack-alert
+        if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
         with:
-          channel: ${{ secrets.DOCS_ALERTS_SLACK_CHANNEL_ID }}
-          bot-token: ${{ secrets.SLACK_DOCS_BOT_TOKEN }}
-          color: failure
-          text: The last "Orphaned assets check" run for ${{github.repository}} failed. See https://github.com/${{github.repository}}/actions/workflows/orphaned-assets-check.yml
+          slack_channel_id: ${{ secrets.DOCS_ALERTS_SLACK_CHANNEL_ID }}
+          slack_token: ${{ secrets.SLACK_DOCS_BOT_TOKEN }}

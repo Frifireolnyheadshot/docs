@@ -70,7 +70,16 @@ Here at {% data variables.product.product_name %}, our developers, writers, and 
 
 1. Click the **Code** tab of your `hello-world` repository.
 1. Above the file list, click the dropdown menu that says **main**.
+
+{% ifversion global-nav-update %}
+
+   ![Screenshot of the repository page. A dropdown menu, labeled with a branch icon and "main", is highlighted with an orange outline.](/assets/images/help/branches/branch-selection-dropdown-global-nav-update.png)
+
+{% else %}
+
    ![Screenshot of the repository page. A dropdown menu, labeled with a branch icon and "main", is highlighted with an orange outline.](/assets/images/help/branches/branch-selection-dropdown.png)
+
+{% endif %}
 
 1. Type a branch name, `readme-edits`, into the text box.
 1. Click **Create branch: readme-edits from main**.
@@ -87,14 +96,9 @@ You can make and save changes to the files in your repository. On {% data variab
 1. Under the `readme-edits` branch you created, click the _README.md_ file.
 1. To edit the file, click {% octicon "pencil" aria-label="Edit file" %}.
 1. In the editor, write a bit about yourself. Try using different Markdown elements.
-{% ifversion code-search-code-view %}
-1. Click **Commit changes...**.
-1. In the "Propose changes" box, write a commit message that describes your changes.
-1. Click **Propose changes**.
-{% else %}
+{% ifversion code-search-code-view %}1. Click **Commit changes...**.{% endif %}
 1. In the "Commit changes" box, write a commit message that describes your changes.
 1. Click **Commit changes**.
-{% endif %}
 
 These changes will be made only to the README file on your `readme-edits` branch, so now this branch contains content that's different from `main`.
 

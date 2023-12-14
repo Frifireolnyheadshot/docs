@@ -34,7 +34,7 @@ This guide gives an overview of how to configure Azure to trust {% data variable
 
   {% endnote %}
 
-- Make sure that the value of the issuer claim that's included with the JSON Web Token (JWT) is set to a publicly routable URL. For more information, see "[AUTOTITLE](/enterprise-server@latest/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect)." 
+- Make sure that the value of the issuer claim that's included with the JSON Web Token (JWT) is set to a publicly routable URL. For more information, see "[AUTOTITLE](/enterprise-server@latest/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect)."
 {% endif %}
 
 ## Adding the Federated Credentials to Azure
@@ -58,6 +58,8 @@ To update your workflows for OIDC, you will need to make two changes to your YAM
 1. Add permissions settings for the token.
 1. Use the [`azure/login`](https://github.com/Azure/login) action to exchange the OIDC token (JWT) for a cloud access token.
 
+{% data reusables.actions.oidc-deployment-protection-rules %}
+
 ### Adding permissions settings
 
  {% data reusables.actions.oidc-permissions-token %}
@@ -75,8 +77,8 @@ name: Run Azure Login with OIDC
 on: [push]
 
 permissions:
-      id-token: write
-      contents: read
+  id-token: write
+  contents: read
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

@@ -9,23 +9,21 @@ import chalk from 'chalk'
 import { Low } from 'lowdb'
 import { JSONFile } from 'lowdb/node'
 
-import shortVersions from '../../../middleware/contextualizers/short-versions.js'
-import contextualize from '../../../middleware/context.js'
-import features from '../../../middleware/contextualizers/features.js'
+import shortVersions from '#src/versions/middleware/short-versions.js'
+import contextualize from '#src/frame/middleware/context/context.js'
+import features from '#src/versions/middleware/features.js'
 import getRedirect from '#src/redirects/lib/get-redirect.js'
-import warmServer from '../../../lib/warm-server.js'
+import warmServer from '#src/frame/lib/warm-server.js'
 import { liquid } from '#src/content-render/index.js'
-import { deprecated } from '../../../lib/enterprise-server-releases.js'
+import { deprecated } from '#src/versions/lib/enterprise-server-releases.js'
 import excludedLinks from '#src/links/lib/excluded-links.js'
-import { getEnvInputs, boolEnvVar } from '../../../.github/actions-scripts/lib/get-env-inputs.js'
-import {
-  debugTimeEnd,
-  debugTimeStart,
-} from '../../../.github/actions-scripts/lib/debug-time-taken.js'
-import { uploadArtifact as uploadArtifactLib } from '../../../.github/actions-scripts/lib/upload-artifact.js'
-import github from '../../../script/helpers/github.js'
-import { getActionContext } from '../../../.github/actions-scripts/lib/action-context.js'
+import { getEnvInputs, boolEnvVar } from '#src/workflows/get-env-inputs.js'
+import { debugTimeEnd, debugTimeStart } from './debug-time-taken.js'
+import { uploadArtifact as uploadArtifactLib } from './upload-artifact.js'
+import github from '#src/workflows/github.js'
+import { getActionContext } from '#src/workflows/action-context.js'
 import { createMinimalProcessor } from '#src/content-render/unified/processor.js'
+import { createReportIssue, linkReports } from '#src/workflows/issue-report.js'
 
 const STATIC_PREFIXES = {
   assets: path.resolve('assets'),
@@ -42,7 +40,7 @@ Object.entries(STATIC_PREFIXES).forEach(([key, value]) => {
 // By setting this env var to something >0, it enables the disk-based
 // caching of external links.
 const EXTERNAL_LINK_CHECKER_MAX_AGE_MS =
-  parseInt(process.env.EXTERNAL_LINK_CHECKER_MAX_AGE_DAYS || 0) * 24 * 60 * 60 * 1000
+  parseInt(process.env.EXTERNAL_LINK_CHECKER_MAX_AGE_DAYS || '7') * 24 * 60 * 60 * 1000
 const EXTERNAL_LINK_CHECKER_DB =
   process.env.EXTERNAL_LINK_CHECKER_DB || 'external-link-checker-db.json'
 
@@ -187,6 +185,9 @@ async function main(core, octokit, uploadArtifact, opts = {}) {
     createReport = false,
     failOnFlaw = false,
     shouldComment = false,
+    reportRepository = 'github/docs-content',
+    reportAuthor = 'docs-bot',
+    reportLabel = 'broken link report',
   } = opts
 
   // Note! The reason we're using `warmServer()` in this script,
@@ -237,6 +238,28 @@ async function main(core, octokit, uploadArtifact, opts = {}) {
 
   await externalLinkCheckerDB.read()
 
+  if (verbose && checkExternalLinks) {
+    core.info(`Checking of external links is is cached to ${EXTERNAL_LINK_CHECKER_DB}`)
+    core.info(
+      `External link cache max age is ${
+        EXTERNAL_LINK_CHECKER_MAX_AGE_MS / 1000 / 60 / 60 / 24
+      } days`,
+    )
+    let countNotTooOld = 0
+    let countTooOld = 0
+    for (const { timestamp } of Object.values(externalLinkCheckerDB.data.urls || {})) {
+      const age = Date.now() - timestamp
+      if (age > EXTERNAL_LINK_CHECKER_MAX_AGE_MS) {
+        countTooOld++
+      } else {
+        countNotTooOld++
+      }
+    }
+    core.info(
+      `External link cache: ${countNotTooOld.toLocaleString()} are still fresh, ${countTooOld.toLocaleString()} links too old`,
+    )
+  }
+
   debugTimeStart(core, 'processPages')
   const t0 = new Date().getTime()
   const flawsGroups = await Promise.all(
@@ -260,14 +283,33 @@ async function main(core, octokit, uploadArtifact, opts = {}) {
 
   summarizeFlaws(core, flaws)
 
+  const uniqueHrefs = new Set(flaws.map((flaw) => flaw.href))
+
   if (flaws.length > 0) {
     await uploadJsonFlawsArtifact(uploadArtifact, flaws, opts)
     core.info(`All flaws written to artifact log.`)
     if (createReport) {
       core.info(`Creating issue for flaws...`)
-      const newReport = await createReportIssue(core, octokit, flaws, opts)
+      const reportProps = {
+        core,
+        octokit,
+        reportTitle: `${uniqueHrefs.size} broken links found`,
+        reportBody: flawIssueDisplay(flaws, opts),
+        reportRepository,
+        reportLabel,
+      }
+      const newReport = await createReportIssue(reportProps)
+
       if (linkReports) {
-        await linkReports(core, octokit, newReport, opts)
+        const linkProps = {
+          core,
+          octokit,
+          newReport,
+          reportRepository,
+          reportAuthor,
+          reportLabel,
+        }
+        await linkReports(linkProps)
       }
     }
     if (shouldComment) {
@@ -286,7 +328,7 @@ async function main(core, octokit, uploadArtifact, opts = {}) {
       core.setOutput('has_flaws_at_level', flawsInLevel.length > 0)
       if (failOnFlaw) {
         core.setFailed(
-          `${flaws.length + 1} broken links found. See action artifact uploads for details`,
+          `${flaws.length} broken links found. See action artifact uploads for details`,
         )
       }
     }
@@ -295,128 +337,6 @@ async function main(core, octokit, uploadArtifact, opts = {}) {
     // and now it can update that comment to say all is well again.
     if (shouldComment) {
       await commentOnPR(core, octokit, flaws, opts)
-    }
-  }
-}
-
-async function createReportIssue(core, octokit, flaws, opts) {
-  const { reportRepository = 'github/docs-content', reportLabel = 'broken link report' } = opts
-  const [owner, repo] = reportRepository.split('/')
-
-  const brokenLinksDisplay = flawIssueDisplay(flaws, opts)
-
-  // Create issue with broken links
-  let newReport
-  try {
-    const { data } = await octokit.request('POST /repos/{owner}/{repo}/issues', {
-      owner,
-      repo,
-      title: `${flaws.length + 1} broken links found`,
-      body: brokenLinksDisplay,
-      labels: [reportLabel],
-    })
-    newReport = data
-    core.info(`Created broken links report at ${newReport.html_url}\n`)
-  } catch (error) {
-    core.error(error)
-    core.setFailed('Error creating new issue')
-    throw error
-  }
-
-  return newReport
-}
-
-async function linkReports(core, octokit, newReport, opts) {
-  const {
-    reportRepository = 'github/docs-content',
-    reportAuthor = 'docs-bot',
-    reportLabel = 'broken link report',
-  } = opts
-
-  const [owner, repo] = reportRepository.split('/')
-
-  core.info('Attempting to link reports...')
-  // Find previous broken link report issue
-  let previousReports
-  try {
-    previousReports = await octokit.rest.issues.listForRepo({
-      owner,
-      repo,
-      creator: reportAuthor,
-      labels: reportLabel,
-      state: 'all', // We want to get the previous report, even if it is closed
-      sort: 'created',
-      direction: 'desc',
-      per_page: 25,
-    })
-    previousReports = previousReports.data
-  } catch (error) {
-    core.setFailed('Error listing issues for repo')
-    throw error
-  }
-  core.info(`Found ${previousReports.length} previous reports`)
-
-  if (previousReports.length <= 1) {
-    core.info('No previous reports to link to')
-    return
-  }
-
-  // 2nd report should be most recent previous report
-  const previousReport = previousReports[1]
-
-  // Comment the old report link on the new report
-  try {
-    await octokit.rest.issues.createComment({
-      owner,
-      repo,
-      issue_number: newReport.number,
-      body: `⬅️ [Previous report](${previousReport.html_url})`,
-    })
-    core.info(`Linked old report to new report via comment on new report, #${newReport.number}`)
-  } catch (error) {
-    core.setFailed(`Error commenting on newReport, #${newReport.number}`)
-    throw error
-  }
-
-  // Comment on all previous reports that are still open
-  for (const previousReport of previousReports) {
-    if (previousReport.state === 'closed' || previousReport.html_url === newReport.html_url) {
-      continue
-    }
-
-    //  If an old report is not assigned to someone we close it
-    const shouldClose = !previousReport.assignees.length
-    let body = `➡️ [Newer report](${newReport.html_url})`
-    if (shouldClose) {
-      body += '\n\nClosing in favor of newer report since there are no assignees on this issue'
-    }
-    try {
-      await octokit.rest.issues.createComment({
-        owner,
-        repo,
-        issue_number: previousReport.number,
-        body,
-      })
-      core.info(
-        `Linked old report to new report via comment on old report: #${previousReport.number}.`,
-      )
-    } catch (error) {
-      core.setFailed(`Error commenting on previousReport, #${previousReport.number}`)
-      throw error
-    }
-    if (shouldClose) {
-      try {
-        await octokit.rest.issues.update({
-          owner,
-          repo,
-          issue_number: previousReport.number,
-          state: 'closed',
-        })
-        core.info(`Closing old report: #${previousReport.number} because it doesn't have assignees`)
-      } catch (error) {
-        core.setFailed(`Error closing previousReport, #${previousReport.number}`)
-        throw error
-      }
     }
   }
 }
@@ -550,7 +470,8 @@ function flawIssueDisplay(flaws, opts, mentionExternalExclusionList = true) {
   if (mentionExternalExclusionList) {
     output +=
       '\n\n---\n\nIf any link reported in this issue is not actually broken ' +
-      'and repeatedly shows up on reports, consider making a PR that adds it as an exception to `lib/excluded-link.js`.'
+      'and repeatedly shows up on reports, consider making a PR that adds it as an exception to `src/links/lib/excluded-links.js`. ' +
+      'For more information, see [Fixing broken links in GitHub user docs](https://github.com/github/docs/blob/main/src/links/lib/README.md).'
   }
 
   return `${flawsToDisplay} broken${
@@ -657,7 +578,9 @@ async function processPermalink(core, permalink, page, pageMap, redirects, opts,
   try {
     html = await renderInnerHTML(page, permalink)
   } catch (error) {
-    console.warn(`The error happened trying to render ${page.relativePath}`)
+    console.warn(
+      `The error happened trying to render ${page.relativePath} (permalink: ${permalink.href})`,
+    )
     throw error
   }
   const $ = cheerio.load(html, { xmlMode: true })
@@ -948,15 +871,15 @@ function isTemporaryRequestError(requestError) {
 // same cache key.
 async function checkExternalURLCached(core, href, { verbose, patient }, db) {
   const cacheMaxAge = EXTERNAL_LINK_CHECKER_MAX_AGE_MS
-  const timestamp = new Date().getTime()
+  const now = new Date().getTime()
   const url = href.split('#')[0]
 
   if (cacheMaxAge) {
-    const tooOld = timestamp - Math.floor(jitter(cacheMaxAge, 10))
+    const tooOld = now - Math.floor(jitter(cacheMaxAge, 10))
     if (db && db.data.urls[url]) {
       if (db.data.urls[url].timestamp > tooOld) {
         if (verbose) {
-          core.debug(`External URL ${url} in cache`)
+          core.info(`External URL ${url} in cache`)
         }
         return db.data.urls[url].result
       } else if (verbose) {
@@ -977,7 +900,7 @@ async function checkExternalURLCached(core, href, { verbose, patient }, db) {
     // to try 40xx and 50x errors another go.
     if (db && result.ok) {
       db.data.urls[url] = {
-        timestamp,
+        timestamp: now,
         result,
       }
     }
@@ -1022,7 +945,7 @@ async function innerFetch(core, url, config = {}) {
   //   3. ~4000ms
   //
   // ...if the limit we set is 3.
-  // Our own timeout, in ./middleware/timeout.js defaults to 10 seconds.
+  // Our own timeout, in #src/frame/middleware/timeout.js defaults to 10 seconds.
   // So there's no point in trying more attempts than 3 because it would
   // just timeout on the 10s. (i.e. 1000 + 2000 + 4000 + 8000 > 10,000)
   const retry = {
@@ -1110,7 +1033,13 @@ function getRetryAfterSleep(headerValue) {
 }
 
 function checkImageSrc(src, $) {
+  if (!src.startsWith('/') && !src.startsWith('http')) {
+    return { CRITICAL: 'Image path is not absolute. Should start with a /' }
+  }
   const pathname = new URL(src, 'http://example.com').pathname
+  if (pathname.startsWith('http://')) {
+    return { CRITICAL: "Don't use insecure HTTP:// for external images" }
+  }
   if (!pathname.startsWith('/')) {
     return { WARNING: "External images can't not be checked" }
   }

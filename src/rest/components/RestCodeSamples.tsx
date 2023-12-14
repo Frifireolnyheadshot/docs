@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, FormEvent } from 'react'
 import { FormControl, Select, Tooltip, TabNav } from '@primer/react'
 import { CheckIcon, CopyIcon } from '@primer/octicons-react'
-import Cookies from 'components/lib/cookies'
+import Cookies from 'src/frame/components/lib/cookies'
 import cx from 'classnames'
 
 import hljs from 'highlight.js/lib/core'
@@ -20,7 +20,7 @@ import styles from './RestCodeSamples.module.scss'
 import { RestMethod } from './RestMethod'
 import type { Operation, ExampleT } from './types'
 import { ResponseKeys, CodeSampleKeys } from './types'
-import { useVersion } from 'components/hooks/useVersion'
+import { useVersion } from 'src/versions/components/useVersion'
 
 type Props = {
   slug: string
@@ -41,7 +41,7 @@ function getLanguageHighlight(selectedLanguage: string) {
 }
 
 export function RestCodeSamples({ operation, slug, heading }: Props) {
-  const { t } = useTranslation('products')
+  const { t } = useTranslation(['rest_reference'])
   const { isEnterpriseServer } = useVersion()
 
   // Refs to track the request example, response example
@@ -248,7 +248,7 @@ export function RestCodeSamples({ operation, slug, heading }: Props) {
         </div>
         <div className="border-top d-inline-flex flex-justify-between width-full flex-items-center pt-2">
           <div className="d-inline-flex ml-2">
-            <TabNav aria-label="Example language selector">
+            <TabNav aria-label={`Example language selector for ${operation.title}`}>
               {languageSelectOptions.map((optionKey) => (
                 <TabNav.Link
                   key={optionKey}
@@ -264,7 +264,7 @@ export function RestCodeSamples({ operation, slug, heading }: Props) {
                   }}
                   href="#"
                 >
-                  {t(`rest.reference.code_sample_options.${optionKey}`)}
+                  {t(`code_sample_options.${optionKey}`)}
                 </TabNav.Link>
               ))}
             </TabNav>
@@ -300,6 +300,8 @@ export function RestCodeSamples({ operation, slug, heading }: Props) {
             `border-top rounded-1 my-0 ${getLanguageHighlight(selectedLanguage)}`,
           )}
           data-highlight={getLanguageHighlight(selectedLanguage)}
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+          tabIndex={0}
         >
           <code ref={requestCodeExample}>{displayedExample[selectedLanguage]}</code>
         </div>
@@ -309,12 +311,15 @@ export function RestCodeSamples({ operation, slug, heading }: Props) {
       <h4
         className="mt-5 mb-2 h5"
         dangerouslySetInnerHTML={{
-          __html: displayedExample.response.description || t('rest.reference.response'),
+          __html: displayedExample.response.description || t('response'),
         }}
       ></h4>
       <div className="border rounded-1">
         {displayedExample.response.schema ? (
-          <TabNav className="pt-2 mx-2" aria-label="Example response format selector">
+          <TabNav
+            className="pt-2 mx-2"
+            aria-label={`Example response format selector for ${operation.title}`}
+          >
             {responseSelectOptions.map((optionKey) => (
               <TabNav.Link
                 key={optionKey}
@@ -330,7 +335,7 @@ export function RestCodeSamples({ operation, slug, heading }: Props) {
                 }}
                 href="#"
               >
-                {t(`rest.reference.response_options.${optionKey}`)}
+                {t(`response_options.${optionKey}`)}
               </TabNav.Link>
             ))}
           </TabNav>
@@ -353,6 +358,8 @@ export function RestCodeSamples({ operation, slug, heading }: Props) {
               )}
               data-highlight={'json'}
               style={{ maxHeight: responseMaxHeight }}
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+              tabIndex={0}
             >
               <code ref={responseCodeExample}>
                 {selectedResponse === ResponseKeys.example
